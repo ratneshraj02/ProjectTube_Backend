@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/ratneshraj02/ProjectTube_Backend#readme",
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.9"
   }
 }
