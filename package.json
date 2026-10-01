@@ -1,0 +1,24 @@
+{
+  "name": "projecttube_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ratneshraj02/ProjectTube_Backend.git"
+  },
+  "author": "ratnesh kumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ratneshraj02/ProjectTube_Backend/issues"
+  },
+  "homepage": "https://github.com/ratneshraj02/ProjectTube_Backend#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
