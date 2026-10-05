@@ -6,29 +6,21 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   //get user details from frontend
-  //validation - not empty
-  // check if user already exist : username or email
-  // check for image check for avatar
-  // upload them cloudinary, avatar
-
-  //create user object - create entry  in db
-  //remove password and refresh token field from response
-  // check from user creation
-  // return response
-
   const { username, fullName, email, password } = req.body;
 
   if (fullName === "") {
     throw new ApiError(400, "fullname is required");
   }
 
+  //validation - not empty
   if (
     [username, fullName, email, password].some((field) => field?.trim() === "")
   ) {
     throw new ApiError(400, "All fields are required");
   }
 
-  const existedUser = User.findOne({
+  // check if user already exist : username or email
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 
@@ -36,13 +28,24 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exist!!");
   }
 
+  // check for image check for avatar
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  //const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImage = req.files.coverImage[0]?.path;
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file required");
   }
 
+  // upload them cloudinary, avatar
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
@@ -50,7 +53,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file required");
   }
 
-  const user = await User.created({
+  //create user object - create entry  in db
+  const user = await User.create({
     username: username.toLowerCase(),
     fullName,
     password,
@@ -59,19 +63,20 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImage: coverImage?.url || "",
   });
 
-  const createdUser = await User.findByIn(user._id).select(
+  //remove password and refresh token field from response
+  const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
 
+  // check from user creation
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering user");
   }
 
+  // return response
   return res
     .status(201)
-    .json(
-      new ApiResponse(200, createdUser, "User registered Successfully", "")
-    );
+    .json(new ApiResponse(200, createdUser, "User registered Successfully"));
 });
 
 export { registerUser };
