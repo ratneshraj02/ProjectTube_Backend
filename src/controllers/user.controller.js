@@ -158,7 +158,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const loggedUser = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     req.user._id,
     {
       refreshToken: null, //this removes the field from document
@@ -167,8 +167,6 @@ const logoutUser = asyncHandler(async (req, res) => {
       returnDocument: "after"
     }
   );
-
-  console.log(loggedUser);
 
   const options = {
     httpOnly: true,
@@ -180,6 +178,10 @@ const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("AccessToken", options)
     .clearCookie("RefreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out"));
+});
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+
 });
 
 export { registerUser, loginUser, logoutUser };
