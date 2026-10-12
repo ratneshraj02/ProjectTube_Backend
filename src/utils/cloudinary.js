@@ -28,4 +28,35 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
+
+const deleteOnCloudinary = async (remoteFileUrl) => {
+  try {
+    if (!remoteFileUrl) {
+      throw new ApiError(401, "remote file not found");
+    }
+    
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    
+    const options = {
+          resource_type: "auto"
+    };
+
+    const url = new URL(remoteFileUrl);
+    console.log("URL", "url");
+    const parts = url.pathname.split("/");
+
+    const uploadIndex = parts.indexOf("upload");
+
+    
+    
+    const deleteResult = await cloudinary.uploader.destroy("image/upload", options);
+    return deleteResult;
+  } catch (err) {
+    throw ApiError(401, err.message || "Error while delecing remove file");
+  }
+}
 export { uploadOnCloudinary };
